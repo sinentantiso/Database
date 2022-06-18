@@ -1,0 +1,210 @@
+-- lets find out the databases on the system --  
+show databases;
+
+-- lets create our company database -- 
+create database 
+company_database;
+
+-- select database to use -- 
+use company_database; 
+
+-- Lets create tables -- 
+-- create EMPLOYEE'S TABLE --- 
+CREATE TABLE Employees (
+    emp_id INT PRIMARY KEY,
+    first_name VARCHAR(20),
+    last_name VARCHAR(20),
+    birth_date DATE,
+    sex VARCHAR(1),
+    salary INT,
+    super_id INT,
+    branch_id INT
+);
+
+-- create BRANCH TABLE --- 
+CREATE TABLE Branch (
+    branch_id INT PRIMARY KEY,
+    branch_name VARCHAR(20),
+    mgr_id INT,
+    mgr_start_date DATE,
+    FOREIGN KEY (mgr_id)
+        REFERENCES employees (emp_id)
+        ON DELETE SET NULL
+);
+
+-- set super_id and Branch_id in the employees table as foreign keys -- \
+alter table employees 
+add foreign key (branch_id)
+references branch (branch_id)
+on delete set null;
+
+alter table employees 
+add foreign key (super_id)
+references employees (emp_id)
+on delete set null;
+
+-- Add Clients Table -- 
+CREATE TABLE clients (
+    client_id INT PRIMARY KEY,
+    client_name VARCHAR(20),
+    branch_id INT,
+    FOREIGN KEY (branch_id)
+        REFERENCES branch (branch_id)
+        ON DELETE SET NULL
+);
+
+-- create WORKS WITH TABLE -- 
+CREATE TABLE works_with (
+    emp_id INT,
+    client_id INT,
+    total_sales INT,
+    PRIMARY KEY (emp_id , client_id),
+    FOREIGN KEY (emp_id)
+        REFERENCES employees (emp_id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (client_id)
+        REFERENCES clients (client_id)
+        ON DELETE CASCADE
+);
+
+-- create BRANCH SUPPLIER TABLE-- 
+CREATE TABLE branch_supplier (
+    branch_id INT,
+    supplier_name VARCHAR(20),
+    supply_type VARCHAR(20),
+    PRIMARY KEY (branch_id , supplier_name),
+    FOREIGN KEY (branch_id)
+        REFERENCES branch (branch_id)
+        ON DELETE CASCADE
+);
+
+-- view tables created -- 
+SELECT 
+    *
+FROM
+    branch;
+
+SELECT 
+    *
+FROM
+    clients;
+    
+-- insert information into the tables -- 
+-- CORPORATE --- 
+insert into employees values(
+100, "Sinethemba", "Ntantiso", '1996-08-27', "M",75100, null, null);
+insert into branch values(
+1,"Corporate", 100,'2010-05-25');
+
+UPDATE employees 
+SET 
+    branch_id = 1
+WHERE
+    emp_id = 100; 
+
+insert into employees values (
+101,"Nikiwe", "Sicwebu", "1995-05-25", "F",75000,100,1);
+
+-- insert information into --
+-- MTHATHA BRANCH -- 
+insert into employees values (
+102, "Pinkie", "Ntantiso",'2005-01-11', "F",25000,null,null);
+insert into branch values(
+2,"Mthatha",102,"2012-09-19");
+update employees
+set branch_id = 2
+where emp_id = 102;
+
+update employees
+set super_id = 
+where emp_id = 102;
+
+insert into employees values (
+103,"Mfundo", "Ndlovu", '1995-08-21', "M", 12500,102,2);
+insert into employees values (
+104,"Tozie", "Fariew", '2004-07-05', "F",35000,102,2);
+insert into employees values (
+105,"Sizwe", "First", "1967-03-15", "M",35000,102,2);
+
+
+-- insert information into --
+-- DURBAN BRANCH -- 
+insert into employees values (
+106,"Mihlali", "Nxusani", "1996-12-12", "M",15698,100,null);
+insert into branch values (
+3,"Durban", 106, '1996-05-27');
+
+update employees
+set branch_id = 3
+where emp_id = 106;
+
+
+insert into employees values (
+107,"Xolisa", "Mephi", "1997-01-30", "M",12500,106,3);
+insert into employees values (
+108,"Nomvula", "Shale", "1973-01-10", "F",26500,106,3);
+
+-- insert information into --
+-- BRANCH SUPPLIER TABLE  -- 
+insert into branch_supplier values (
+2,"Microsoft","software");
+insert into branch_supplier values (
+2,"Zoom","software");
+insert into branch_supplier values (
+3,"Boxer Build","Material");
+insert into branch_supplier values (
+2,"TP Liquid","Clean stuff");
+insert into branch_supplier values (
+3,"Skere","paper");
+insert into branch_supplier values (
+3,"Uniball","stationery");
+insert into branch_supplier values (
+3,"Ramathe","Accounting");
+
+-- insert information into --
+-- CLIENT TABLE -- 
+
+insert into clients values (
+400,"Silulo Technologies",2);
+insert into clients values (
+401,"Mzamo construction",2);
+insert into clients values (
+402,"HPH construction LTD",3);
+insert into clients values (
+403,"HV cleaners",3);
+insert into clients values (
+404,"tough cleaners",2);
+insert into clients values (
+405,"HYO (Pty) LTD",3);
+insert into clients values (
+406,"HBO Television LTD",2);
+
+-- insert information into --
+-- WORKS WITH TABLE -- 
+
+insert into works_with values (
+105,400,55000);
+insert into works_with values (
+102,401,267000);
+insert into works_with values (
+108,402,22500);
+insert into works_with values (
+107,403,35000);
+insert into works_with values (
+108,403,75000);
+insert into works_with values (
+105,404,105800);
+insert into works_with values (
+107,405,125000);
+insert into works_with values (
+102,406,35800);
+insert into works_with values (
+105,406,36800);
+
+-- check the tables -- 
+
+select* from branch;
+select* from branch_supplier;
+select* from clients;
+select* from employees;
+select* from works_with;
